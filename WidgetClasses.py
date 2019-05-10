@@ -196,12 +196,13 @@ class sliders(qt.QGroupBox):
        'vals' and the interval of possible slider values is set to 'ints'.
        SLIDERS can be embedded into pyqt-Applications.'''
 
-    def __init__(self,tStep=1e-2,tRange=(1e-6,1e-1),nams=None,vals=None,ints=None):
+    def __init__(self,tStep=-2,tRange=(-5,0),nams=None,vals=None,ints=None):
+        # timestep values and ranges to be understood as powers of 10
         super().__init__()
         self.setTitle('Parameters')
 
         self.Names = ['Timestep'] + list(nams)
-        self.fString = ['%4.3f']+['%g']*len(nams)
+        self.fString = ['%7.6f']+['%g']*len(nams)
         self.Values = [tStep] + list(vals)
         self.Intervals = [tRange] + list(ints)
 
@@ -220,7 +221,10 @@ class sliders(qt.QGroupBox):
         # Creating UI Elements.
         layout = qt.QGridLayout()
 
-        for n,v,fs in zip(self.Names,self.Values,self.fString):
+        for ind,(n,v,fs) in enumerate(zip(self.Names,self.Values,self.fString)):
+            # Display for timestep value is treated lograrithmically
+            if ind == 0:
+                v = 10**v
             self.Labels.append(qt.QLabel(n + ': '+ fs % v))
             self.Sliders.append(qt.QSlider(Qt.Horizontal))
 
@@ -251,6 +255,9 @@ class sliders(qt.QGroupBox):
                                                self.fString)):
             val = f(s.value())
             self.Values[ind] = val
+            # Display for timestep value is treated lograrithmically
+            if ind == 0:
+                val = 10**val
             l.setText(n + ': ' + fs %val)
 
         self.Signal.changed.emit()
@@ -269,8 +276,8 @@ class sliders(qt.QGroupBox):
         return f
 
     def timestep_value(self):
-        '''Returns the current value set for 'Timestep'.'''
-        return self.Values[0]
+        '''Returns the current value set for 'Timestep'. Logarithmic.'''
+        return 10**self.Values[0]
 
     def param_values(self):
         '''Returns the current values of all sliders except 'Timestep'.'''
