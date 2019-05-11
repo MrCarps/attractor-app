@@ -422,18 +422,26 @@ class AttractorApp(qt.QMainWindow):
            export (.png).'''
         self.pauseButton.toggle()
         self.pauseAll()
-        for ind,a in enumerate(self.attractors):
-            a.plot.export_vispy('vispyExport_'+str(ind)+'.png')
-        print('Successfully exported with Vispy!')
+        file,_ = qt.QFileDialog.getSaveFileName(None, "Save Plots ...","","")
+        if file:
+            for ind,a in enumerate(self.attractors):
+                a.plot.export_vispy(file + '_vispy_' + str(ind) + '.png')
+            print('Successfully exported with Vispy to ' + file + '*')
+        else:
+            print('Invalid file-name. Could not save plots.')
 
     def saveMCall(self):
         '''Called from the MenuBar to export all created Attractors as
            matplotlib export (.png).'''
         self.pauseButton.toggle()
         self.pauseAll()
-        for ind,a in enumerate(self.attractors):
-            a.plot.export_plt('pltExport_'+str(ind)+'.png')
-        print('Successfully exported with Matplotlib!')
+        file,_ = qt.QFileDialog.getSaveFileName(None, "Save Plots ...","","")
+        if file:
+            for ind,a in enumerate(self.attractors):
+                a.plot.export_plt(file + '_plt_' + str(ind) + '.png')
+            print('Successfully exported with Matplotlib to ' + file + '*')
+        else:
+            print('Invalid file-name. Could not save plots.')
 
     def infoCall(self):
         '''Called from the MenuBar to open InfoWindow.'''
